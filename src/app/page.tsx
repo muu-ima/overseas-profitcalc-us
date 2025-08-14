@@ -15,7 +15,7 @@ import {
 } from "@/lib/profitCalc";
 
 import FinalResultModal from './components/FinalResultModal';
-import { parse } from "path";
+
 
 // ここから型定義を追加
 type ShippingResult = {
