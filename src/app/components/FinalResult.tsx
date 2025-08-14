@@ -2,16 +2,12 @@
 
 import { FinalProfitDetailUS } from '@/types/profitCalc';
 
-
-
 type FinalResultProps = {
   shippingMethod: string;
   shippingJPY: number;
   data: FinalProfitDetailUS;
   exchangeRateUSDtoJPY: number; // 追加
 };
-
-
 
 export default function FinalResult({
   shippingMethod,
