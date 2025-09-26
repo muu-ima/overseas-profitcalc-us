@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ChatIcon from "./components/ChatIcon";
+// import ChatIcon from "./components/ChatIcon";
 import { useEffect, useState } from "react";
 import { getCheapestShipping, ShippingData } from "@/lib/shipping";
 import ExchangeRate from "./components/ExchangeRate";
