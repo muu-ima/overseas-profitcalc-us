@@ -176,213 +176,225 @@ export default function Page() {
     selectedCategoryFee !== "";
 
   return (
-    <div className="p-4 w-full max-w-7xl mx-auto flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
-      <div className="flex-1 flex flex-col space-y-4">
-        {/* 為替レート表示コンポーネント */}
-        <ExchangeRate onRateChange={setRate} />
-        <div>
-          <label className="block font-semibold mb-1">仕入れ値 (円) </label>
-          <input
-            type="number"
-            step="10"
-            min="10"
-            value={costPrice}
-            onChange={(e) => {
-              const raw = e.target.value;
-              //空なら空にする
-              if (raw === "") {
-                setCostPrice("");
-                return;
-              }
-
-              //数値化
-              let num = Number(raw);
-
-              //マイナスなら0に
-              if (num < 0) num = 0;
-
-              setCostPrice(num);
-            }}
-            placeholder="仕入れ値"
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">売値 (＄)</label>
-          <input
-            type="text"
-            value={sellingPrice}
-            onChange={(e) => {
-              const raw = e.target.value;
-              if (raw === "") {
-                setSellingPrice("");
-                return;
-              }
-              // 数字と小数点2桁までを許可
-              if (/^\d*\.?\d{0,2}$/.test(raw)) {
-                setSellingPrice(raw); // 入力中は文字列のまま保持
-              }
-            }}
-            onBlur={() => {
-              //入力確定時に少数点第2位まで丸める
-              if (sellingPrice !== "") {
-                const num = Math.floor(parseFloat(sellingPrice) * 100) / 100;
-                setSellingPrice(num.toFixed(2)); // 文字列にして再セット
-              }
-            }}
-            placeholder="売値"
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {rate !== null && sellingPrice !== "" && (
-            <p>概算円価格：約 {Math.round(parseFloat(sellingPrice) * rate)} 円</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">実重量 (g) </label>
-          <input
-            type="number"
-            value={weight ?? ""}
-            onChange={(e) =>
-              setWeight(e.target.value === "" ? null : Number(e.target.value))
-            }
-            placeholder="実重量"
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">サイズ (cm)</label>
-          <div className="grid grid-cols-3 gap-2">
+    <div className="py-4">
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          ProfitCalc(US)
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          仕入れ値・配送料・為替レートから利益率や詳細な数値を自動計算します
+        </p>
+      </div>
+      <div className="grid grid-cols-1 gap-x-8 md:grid-cols-2">
+        <div className="flex-1 flex flex-col space-y-4">
+          {/* 為替レート表示コンポーネント */}
+          <ExchangeRate onRateChange={setRate} />
+          <div>
+            <label className="block font-semibold mb-1">仕入れ値 (円) </label>
             <input
               type="number"
-              value={dimensions.length || ""}
+              step="10"
+              min="10"
+              value={costPrice}
               onChange={(e) => {
                 const raw = e.target.value;
+                //空なら空にする
                 if (raw === "") {
-                  setDimensions((prev) => ({ ...prev, length: 0 }));
+                  setCostPrice("");
                   return;
                 }
 
+                //数値化
                 let num = Number(raw);
+
+                //マイナスなら0に
                 if (num < 0) num = 0;
 
-                setDimensions((prev) => ({ ...prev, length: num }));
+                setCostPrice(num);
               }}
-              placeholder="長さ"
-              className="px-2 py-1 border rounded-md"
-            />
-            <input
-              type="number"
-              value={dimensions.width || ""}
-              onChange={(e) => {
-                const raw = e.target.value;
-                if (raw === "") {
-                  setDimensions((prev) => ({ ...prev, width: 0 }));
-                  return;
-                }
-
-                let num = Number(raw);
-                if (num < 0) num = 0;
-
-                setDimensions((prev) => ({ ...prev, width: num }));
-              }}
-              placeholder="幅"
-              className="px-2 py-1 border rounded-md"
-            />
-            <input
-              type="number"
-              value={dimensions.height || ""}
-              onChange={(e) => {
-                const raw = e.target.value;
-                if (raw === "") {
-                  setDimensions((prev) => ({ ...prev, height: 0 }));
-                  return;
-                }
-
-                let num = Number(raw);
-                if (num < 0) num = 0;
-
-                setDimensions((prev) => ({ ...prev, height: num }));
-              }}
-              placeholder="高さ"
-              className="px-2 py-1 border rounded-md"
+              placeholder="仕入れ値"
+              className="w-full px-3 py-2 border rounded-md"
             />
           </div>
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">カテゴリ手数料 </label>
-          <select
-            value={selectedCategoryFee}
-            onChange={(e) => setSelectedCategoryFee(Number(e.target.value))}
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            <option value="">カテゴリを選択してください</option>
-            {categoryOptions.map((cat) => (
-              <option key={cat.label} value={cat.value}>
-                {cat.label} ({cat.value}%)
-              </option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label className="block font-semibold mb-1">売値 (＄)</label>
+            <input
+              type="text"
+              value={sellingPrice}
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === "") {
+                  setSellingPrice("");
+                  return;
+                }
+                // 数字と小数点2桁までを許可
+                if (/^\d*\.?\d{0,2}$/.test(raw)) {
+                  setSellingPrice(raw); // 入力中は文字列のまま保持
+                }
+              }}
+              onBlur={() => {
+                //入力確定時に少数点第2位まで丸める
+                if (sellingPrice !== "") {
+                  const num = Math.floor(parseFloat(sellingPrice) * 100) / 100;
+                  setSellingPrice(num.toFixed(2)); // 文字列にして再セット
+                }
+              }}
+              placeholder="売値"
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            <div className="mt-1 h-5 text-xs text-gray-500">
+              {rate !== null && sellingPrice !== "" && (
+                <p>概算円価格：約 {Math.round(parseFloat(sellingPrice) * rate)} 円</p>
+              )}
+            </div>
+          </div>
 
-      </div>
-      {/* 右カラム */}
-      <div className="flex-1 flex flex-col space-y-4">
-        {/* 配送結果と利益結果を右側に移動する */}
-        {/* 配送結果 */}
-        <div className="w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <p>
-            配送方法: {
-              result === null
-                ? "計算中..."
-                : result.method
-            }
-          </p>
-          <p>
-            配送料: {
-              result === null
-                ? "計算中..."
-                : result.price !== null
-                  ? `${result.price}円`
-                  : "不明"
-            }
-          </p>
+          <div>
+            <label className="block font-semibold mb-1">実重量 (g) </label>
+            <input
+              type="number"
+              value={weight ?? ""}
+              onChange={(e) =>
+                setWeight(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="実重量"
+              className="w-full px-3 py-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">サイズ (cm)</label>
+            <div className="grid grid-cols-3 gap-2">
+              <input
+                type="number"
+                value={dimensions.length || ""}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    setDimensions((prev) => ({ ...prev, length: 0 }));
+                    return;
+                  }
+
+                  let num = Number(raw);
+                  if (num < 0) num = 0;
+
+                  setDimensions((prev) => ({ ...prev, length: num }));
+                }}
+                placeholder="長さ"
+                className="px-2 py-1 border rounded-md"
+              />
+              <input
+                type="number"
+                value={dimensions.width || ""}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    setDimensions((prev) => ({ ...prev, width: 0 }));
+                    return;
+                  }
+
+                  let num = Number(raw);
+                  if (num < 0) num = 0;
+
+                  setDimensions((prev) => ({ ...prev, width: num }));
+                }}
+                placeholder="幅"
+                className="px-2 py-1 border rounded-md"
+              />
+              <input
+                type="number"
+                value={dimensions.height || ""}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    setDimensions((prev) => ({ ...prev, height: 0 }));
+                    return;
+                  }
+
+                  let num = Number(raw);
+                  if (num < 0) num = 0;
+
+                  setDimensions((prev) => ({ ...prev, height: num }));
+                }}
+                placeholder="高さ"
+                className="px-2 py-1 border rounded-md"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">カテゴリ手数料 </label>
+            <select
+              value={selectedCategoryFee}
+              onChange={(e) => setSelectedCategoryFee(Number(e.target.value))}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="">カテゴリを選択してください</option>
+              {categoryOptions.map((cat) => (
+                <option key={cat.label} value={cat.value}>
+                  {cat.label} ({cat.value}%)
+                </option>
+              ))}
+            </select>
+          </div>
+
         </div>
+        {/* 右カラム */}
+        <div className="flex-1 flex flex-col space-y-4">
+          {/* 配送結果と利益結果を右側に移動する */}
+          {/* 配送結果 */}
+          <div className="w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <p>
+              配送方法: {
+                result === null
+                  ? "計算中..."
+                  : result.method
+              }
+            </p>
+            <p>
+              配送料: {
+                result === null
+                  ? "計算中..."
+                  : result.price !== null
+                    ? `${result.price}円`
+                    : "不明"
+              }
+            </p>
+          </div>
 
 
-        {/* 利益結果 */}
-        {rate !== null && sellingPrice !== "" && (
-          <Result
-            originalPriceUSD={sellingPrice !== "" ? parseFloat(sellingPrice) : 0}  // ★ 修正
-            priceJPY={typeof sellingPrice === "number" && rate !== null ? sellingPrice * rate : 0}
-            sellingPriceInclTax={sellingPriceInclTax}
-            exchangeRateUSDtoJPY={rate ?? 0}
-            calcResult={calcResult}
-          />
-        )}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          disabled={!isEnabled}
-          className={`btn-primary ${isEnabled ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" : "bg-gray-400 cursor-not-allowed text-gray-200"}
+          {/* 利益結果 */}
+          {rate !== null && sellingPrice !== "" && (
+            <Result
+              originalPriceUSD={sellingPrice !== "" ? parseFloat(sellingPrice) : 0}  // ★ 修正
+              priceJPY={typeof sellingPrice === "number" && rate !== null ? sellingPrice * rate : 0}
+              sellingPriceInclTax={sellingPriceInclTax}
+              exchangeRateUSDtoJPY={rate ?? 0}
+              calcResult={calcResult}
+            />
+          )}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            disabled={!isEnabled}
+            className={`btn-primary ${isEnabled ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer" : "bg-gray-400 cursor-not-allowed text-gray-200"}
            px-8 py-4 text-lg rounded-full transition-colors duration-300`}
-        >
-          最終利益の詳細を見る
-        </button>
+          >
+            最終利益の詳細を見る
+          </button>
 
-        {isModalOpen && final && (
-          <FinalResultModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            shippingMethod={result?.method || ""}
-            shippingJPY={calcResult?.shippingJPY || 0}
-            data={final}
-            exchangeRateUSDtoJPY={rate ?? 0}
-          />
-        )}
+          {isModalOpen && final && (
+            <FinalResultModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              shippingMethod={result?.method || ""}
+              shippingJPY={calcResult?.shippingJPY || 0}
+              data={final}
+              exchangeRateUSDtoJPY={rate ?? 0}
+            />
+          )}
 
+        </div>
+        {/* チャットアイコンをここで表示 */}
+        <ChatIcon />
       </div>
-      {/* チャットアイコンをここで表示 */}
-      <ChatIcon />
-    </div >
+    </div>
   );
 }
