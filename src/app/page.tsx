@@ -393,7 +393,7 @@ export default function Page() {
 
         </div>
         {/* チャットアイコンをここで表示 */}
-        <ChatIcon />
+        {/* <ChatIcon /> */}
       </div>
     </div>
   );
